@@ -23,8 +23,8 @@
         <div class="masthead">
             <div class="masthead-content text-white">
                 <div class="container-fluid px-4 px-lg-0">
-                    <h1 class="fst-italic lh-1 mb-4">Our Website is Coming Soon</h1>
-                    <p class="mb-5">We're working hard to finish the development of this site. Sign up below to receive updates and to be notified when we launch!</p>
+                    <h1 class="fst-italic lh-1 mb-4">The online blind date match making platform.</h1>
+                    <p class="mb-5">Sign up to be part of early users!</p>
                     <!-- * * * * * * * * * * * * * * *-->
                     <!-- * * SB Forms Contact Form * *-->
                     <!-- * * * * * * * * * * * * * * *-->
@@ -32,26 +32,30 @@
                     <!-- To make this form functional, sign up at-->
                     <!-- https://startbootstrap.com/solution/contact-forms-->
                     <!-- to get an API token!-->
-                    <form id="contactForm" data-sb-form-api-token="API_TOKEN">
+                    <form id="contactForm" onsubmit="return sendMail()">
                         <!-- Email address input-->
                         <div class="row input-group-newsletter">
-                            <div class="col"><input class="form-control" id="email" type="email" placeholder="Enter email address..." aria-label="Enter email address..." data-sb-validations="required,email" /></div>
-                            <div class="col-auto"><button class="btn btn-primary disabled" id="submitButton" type="submit">Notify Me!</button></div>
+                            <div class="col">
+                                <input class="form-control" name="email" id="email" type="email" placeholder="Enter email address..." aria-label="Enter email address..." required="required,email" />
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" id="submitButton" type="submit">Notify Me!</button>
+                            </div>
                         </div>
-                        <div class="invalid-feedback mt-2" data-sb-feedback="email:required">An email is required.</div>
-                        <div class="invalid-feedback mt-2" data-sb-feedback="email:email">Email is not valid.</div>
+                        <!-- <div class="invalid-feedback mt-2" data-sb-feedback="email:required">An email is required.</div>
+                        <div class="invalid-feedback mt-2" data-sb-feedback="email:email">Email is not valid.</div> -->
                         <!-- Submit success message-->
                         <!---->
                         <!-- This is what your users will see when the form-->
                         <!-- has successfully submitted-->
-                        <div class="d-none" id="submitSuccessMessage">
+                        <!-- <div class="d-none" id="submitSuccessMessage">
                             <div class="text-center mb-3 mt-2">
                                 <div class="fw-bolder">Form submission successful!</div>
                                 To activate this form, sign up at
                                 <br />
                                 <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
                             </div>
-                        </div>
+                        </div> -->
                         <!-- Submit error message-->
                         <!---->
                         <!-- This is what your users will see when there is-->
@@ -72,12 +76,55 @@
         </div>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
         <!-- * *                               SB Forms JS                               * *-->
         <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+        <!-- <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script> -->
+
+        <script>
+            function sendMail() {
+                var post = document.getElementById('email').value;
+                var data = new FormData();
+                data.append("email" , document.getElementById('email').value);
+                const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                 if(res.test(post)){
+                    fetch('contact.php' , {
+                    method: 'post',
+                    body: data,
+                    }).then(  (response) => {
+                        if(response.status != 200){
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Bad server response',
+                            })
+                        }
+                        return response.text()
+                    } ).then((res) => {
+
+                        Swal.fire(
+                        'Good job!',
+                        res,
+                        'success'
+                        )
+                        console.log(res.error);
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+                    }else{
+                        Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Invalid email',
+                        })
+                    }
+                return false
+                
+            }
+        </script>
     </body>
 </html>
